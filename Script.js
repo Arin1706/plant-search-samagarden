@@ -1,99 +1,47 @@
-const API_BASE = "https://script.google.com/macros/s/REPLACE_WITH_YOUR_SCRIPT_ID/exec";
+let plants = [];
 
-const input = document.getElementById("searchInput");
-const suggestionsBox = document.getElementById("suggestions");
-const plantDetail = document.getElementById("plantDetail");
-const diseaseForm = document.getElementById("diseaseForm");
-const noResult = document.getElementById("noResult");
+window.onload = async function () {
+  const res = await fetch(
+    "https://script.google.com/macros/s/AKfycbx1u-OS9-MZYabqxLMAsB14iI27soBw8C13imJC0XDRkEIkSSj9MsP4IQlHnsDsquqGOA/exec?page=suggest"
+  );
+  plants = await res.json();
 
-input.addEventListener("input", async () => {
-  const query = input.value.trim();
-  if (query.length === 0) return (suggestionsBox.innerHTML = "");
+  const input = document.getElementById("searchInput");
+  const suggestionsBox = document.getElementById("suggestions");
 
-  const res = await fetch(`${API_BASE}?page=suggest&query=${encodeURIComponent(query)}`);
-  const suggestions = await res.json();
+  input.addEventListener("input", function () {
+    const keyword = input.value.toLowerCase().trim();
+    suggestionsBox.innerHTML = "";
+    if (!keyword) {
+      suggestionsBox.style.display = "none";
+      return;
+    }
 
-  suggestionsBox.innerHTML = "";
-  suggestions.forEach(item => {
-    const li = document.createElement("li");
-    li.textContent = `${item.name} (${item.scientific})`;
-    li.onclick = () => {
-      input.value = item.name;
-      suggestionsBox.innerHTML = "";
-      fetchPlantData(item.name);
-    };
-    suggestionsBox.appendChild(li);
+    const filtered = plants.filter(
+      (p) =>
+        p.name.toLowerCase().includes(keyword) ||
+        p.scientific.toLowerCase().includes(keyword)
+    );
+
+    filtered.forEach((p) => {
+      const li = document.createElement("li");
+      li.textContent = `${p.name} (${p.scientific})`;
+      li.onclick = () => {
+        input.value = p.name;
+        suggestionsBox.style.display = "none";
+      };
+      suggestionsBox.appendChild(li);
+    });
+
+    suggestionsBox.style.display = filtered.length ? "block" : "none";
   });
-});
+};
 
 function submitSearch() {
-  const keyword = input.value.trim();
-  if (keyword) {
-    fetchPlantData(keyword);
-  } else {
-    alert("กรุณากรอกชื่อต้นไม้ก่อนค้นหา");
-  }
-}
-
-async function fetchPlantData(keyword) {
-  const res = await fetch(`${API_BASE}?page=data&keyword=${encodeURIComponent(keyword)}`);
-  const data = await res.json();
-
-  if (!data || !data.name) {
-    plantDetail.classList.add("hidden");
-    noResult.classList.remove("hidden");
+  const keyword = document.getElementById("searchInput").value.trim();
+  if (!keyword) {
+    alert("กรุณาพิมพ์ชื่อพืชก่อนค้นหา");
     return;
   }
-
-  noResult.classList.add("hidden");
-  plantDetail.classList.remove("hidden");
-
-  document.getElementById("plantImage").src = convertGoogleDriveImage(data.image);
-  document.getElementById("speciesId").textContent = data.speciesId;
-  document.getElementById("name").textContent = data.name;
-  document.getElementById("subcate").textContent = data.subcate;
-  document.getElementById("genus").textContent = data.genus;
-  document.getElementById("scientific").textContent = data.scientific;
-  document.getElementById("morphology").textContent = data.morphology;
-  document.getElementById("barcode").textContent = data.barcode;
-
-  diseaseForm.dataset.barcode = data.barcode;
-  diseaseForm.dataset.name = data.name;
-  diseaseForm.dataset.scientific = data.scientific;
+  window.location.href = `?page=PlantInfoDisplay&keyword=${encodeURIComponent(keyword)}`;
 }
-
-function convertGoogleDriveImage(url) {
-  const match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)\\//);
-  if (match) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
-  return url;
-}
-
-diseaseForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const quantity = parseInt(document.getElementById("quantity").value);
-  const body = {
-    name: diseaseForm.dataset.name,
-    scientific: diseaseForm.dataset.scientific,
-    barcode: diseaseForm.dataset.barcode,
-    zone: document.getElementById("zone").value,
-    quantity,
-    description: document.getElementById("description").value,
-    treatment: document.getElementById("treatment").value,
-    status: document.getElementById("status").value,
-    caretaker: document.getElementById("caretaker").value,
-    reporter: document.getElementById("reporter").value
-  };
-
-  const res = await fetch(`${API_BASE}?page=submit`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-
-  const result = await res.text();
-  alert(result);
-  diseaseForm.reset();
-});

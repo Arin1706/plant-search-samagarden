@@ -1,12 +1,11 @@
-// === ตั้งค่า URL Google Apps Script (ที่ deploy แล้ว) ===
 const API_BASE = "https://script.google.com/macros/s/REPLACE_WITH_YOUR_SCRIPT_ID/exec";
 
 const input = document.getElementById("searchInput");
 const suggestionsBox = document.getElementById("suggestions");
 const plantDetail = document.getElementById("plantDetail");
 const diseaseForm = document.getElementById("diseaseForm");
+const noResult = document.getElementById("noResult");
 
-// ======================== Autocomplete ========================
 input.addEventListener("input", async () => {
   const query = input.value.trim();
   if (query.length === 0) return (suggestionsBox.innerHTML = "");
@@ -27,7 +26,6 @@ input.addEventListener("input", async () => {
   });
 });
 
-// ======================== ค้นหาและแสดงผลพืช ========================
 function submitSearch() {
   const keyword = input.value.trim();
   if (keyword) {
@@ -41,8 +39,13 @@ async function fetchPlantData(keyword) {
   const res = await fetch(`${API_BASE}?page=data&keyword=${encodeURIComponent(keyword)}`);
   const data = await res.json();
 
-  if (!data || !data.name) return alert("ไม่พบข้อมูลพืชนี้");
+  if (!data || !data.name) {
+    plantDetail.classList.add("hidden");
+    noResult.classList.remove("hidden");
+    return;
+  }
 
+  noResult.classList.add("hidden");
   plantDetail.classList.remove("hidden");
 
   document.getElementById("plantImage").src = convertGoogleDriveImage(data.image);
@@ -54,21 +57,19 @@ async function fetchPlantData(keyword) {
   document.getElementById("morphology").textContent = data.morphology;
   document.getElementById("barcode").textContent = data.barcode;
 
-  // เก็บไว้ใช้ตอนส่งฟอร์ม
   diseaseForm.dataset.barcode = data.barcode;
   diseaseForm.dataset.name = data.name;
   diseaseForm.dataset.scientific = data.scientific;
 }
 
 function convertGoogleDriveImage(url) {
-  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)\//);
+  const match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)\\//);
   if (match) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
   return url;
 }
 
-// ======================== ส่งฟอร์มรายงานโรคพืช ========================
 diseaseForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 

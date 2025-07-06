@@ -1,47 +1,35 @@
-let plants = [];
+const input = document.getElementById("plantInput");
+const suggestionsContainer = document.getElementById("suggestions");
 
-window.onload = async function () {
-  const res = await fetch(
-    "https://script.google.com/macros/s/AKfycbx1u-OS9-MZYabqxLMAsB14iI27soBw8C13imJC0XDRkEIkSSj9MsP4IQlHnsDsquqGOA/exec?page=suggest"
-  );
-  plants = await res.json();
-
-  const input = document.getElementById("searchInput");
-  const suggestionsBox = document.getElementById("suggestions");
-
-  input.addEventListener("input", function () {
-    const keyword = input.value.toLowerCase().trim();
-    suggestionsBox.innerHTML = "";
-    if (!keyword) {
-      suggestionsBox.style.display = "none";
-      return;
-    }
-
-    const filtered = plants.filter(
-      (p) =>
-        p.name.toLowerCase().includes(keyword) ||
-        p.scientific.toLowerCase().includes(keyword)
-    );
-
-    filtered.forEach((p) => {
-      const li = document.createElement("li");
-      li.textContent = `${p.name} (${p.scientific})`;
-      li.onclick = () => {
-        input.value = p.name;
-        suggestionsBox.style.display = "none";
-      };
-      suggestionsBox.appendChild(li);
-    });
-
-    suggestionsBox.style.display = filtered.length ? "block" : "none";
-  });
-};
-
-function submitSearch() {
-  const keyword = document.getElementById("searchInput").value.trim();
+input.addEventListener("input", async () => {
+  const keyword = input.value.trim();
   if (!keyword) {
-    alert("กรุณาพิมพ์ชื่อพืชก่อนค้นหา");
+    suggestionsContainer.innerHTML = "";
     return;
   }
-  window.location.href = `?page=PlantInfoDisplay&keyword=${encodeURIComponent(keyword)}`;
+
+  const response = await fetch(
+    `https://script.google.com/macros/s/AKfycbzKoNvt3JGqKzT-L1RvA7dL5uTqtAox5mDLtRMfu6-I-vMnhDHOv7dsUlxpoaFBkRI1/exec?page=suggest&query=${encodeURIComponent(keyword)}`
+  );
+  const data = await response.json();
+
+  suggestionsContainer.innerHTML = "";
+  data.forEach((item) => {
+    const div = document.createElement("div");
+    div.textContent = item;
+    div.addEventListener("click", () => {
+      input.value = item;
+      suggestionsContainer.innerHTML = "";
+    });
+    suggestionsContainer.appendChild(div);
+  });
+});
+
+function submitSearch() {
+  const keyword = input.value.trim();
+  if (keyword) {
+    window.location.href = `?page=PlantInfoDisplay&keyword=${encodeURIComponent(keyword)}`;
+  } else {
+    alert("กรุณากรอกชื่อต้นไม้ก่อนค้นหา");
+  }
 }

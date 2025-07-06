@@ -1,104 +1,91 @@
 body {
-  font-family: 'Kanit', sans-serif;
-  background-color: #f0fdf4;
-  background-image: radial-gradient(#d9ead3 1px, transparent 1px);
-  background-size: 20px 20px;
-  color: #1f3a24;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #1f3a24;
+  color: #ffffff;
   margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #1f3a24;
   padding: 20px;
+  text-align: center;
+  color: #a1d661;
+  border-bottom: 1px solid #cccccc;
 }
 
 .container {
   max-width: 800px;
   margin: auto;
-  background: #ffffff;
-  color: #1f3a24;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-h1, h2 {
-  color: #1f3a24;
+  padding: 40px 20px;
   text-align: center;
 }
 
+h2 {
+  color: #a1d661;
+}
+
+p {
+  color: #cccccc;
+}
+
 .search-box {
-  display: flex;
-  gap: 10px;
-  margin: 20px 0;
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
 }
 
-input[type="text"], input[type="number"], textarea, select {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  font-size: 1em;
-}
-
-button {
-  background-color: #a1d661;
-  color: #1f3a24;
+input[type="text"] {
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 16px;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
+  border-radius: 4px;
 }
 
-button:hover {
-  background-color: #8ec74e;
-}
-
-ul#suggestions {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  background: #ffffff;
+.autocomplete-suggestions {
+  background-color: #ffffff;
+  color: #000000;
   border: 1px solid #cccccc;
+  border-top: none;
   max-height: 200px;
   overflow-y: auto;
   position: absolute;
   width: 100%;
-  z-index: 99;
+  z-index: 10;
 }
 
-ul#suggestions li {
+.autocomplete-suggestions div {
   padding: 10px;
   cursor: pointer;
-  color: #1f3a24;
 }
 
-ul#suggestions li:hover {
+.autocomplete-suggestions div:hover {
   background-color: #a1d661;
-  color: #ffffff;
+  color: #000;
 }
 
-.plant-info {
-  display: flex;
-  gap: 20px;
-  margin-top: 30px;
-  align-items: flex-start;
+.search-btn {
+  background-color: #a1d661;
+  color: #1f3a24;
+  font-weight: bold;
+  border: none;
+  padding: 12px 20px;
+  margin-top: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
 }
 
-.plant-info img {
-  width: 200px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 2px solid #a1d661;
+.search-btn:hover {
+  background-color: #8cc94c;
 }
 
-.details p {
-  margin: 5px 0;
-}
-
-form label {
-  display: block;
-  margin-top: 12px;
-  font-weight: 500;
-}
-
-.hidden {
-  display: none;
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #666666;
+  font-size: 14px;
 }

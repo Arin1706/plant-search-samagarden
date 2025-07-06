@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ข้อมูลพืช - SAMA Garden</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #1f3a24;
+      color: #ffffff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #2c4a30;
+      padding: 30px;
+      border-radius: 12px;
+    }
+
+    img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 2px solid #a1d661;
+    }
+
+    h2 {
+      color: #a1d661;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #a1d661;
+      color: #1f3a24;
+      border: none;
+      padding: 12px 20px;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🌿 ข้อมูลต้นไม้</h2>
+    <div id="plant-info" class="section">
+      <img id="plant-image" src="" alt="Plant Image" />
+      <p><strong>Species ID:</strong> <span id="speciesId"></span></p>
+      <p><strong>Name:</strong> <span id="name"></span></p>
+      <p><strong>Sub Category:</strong> <span id="subcate"></span></p>
+      <p><strong>Genus:</strong> <span id="genus"></span></p>
+      <p><strong>Scientific Name:</strong> <span id="scientific"></span></p>
+      <p><strong>Plant Morphology:</strong> <span id="morphology"></span></p>
+      <p><strong>Barcode:</strong> <span id="barcode"></span></p>
+    </div>
+
+    <h2>📋 รายงานโรคพืช</h2>
+    <form id="report-form">
+      <label>โซนที่พบ:</label>
+      <input type="text" id="zone" required />
+
+      <label>จำนวนต้น:</label>
+      <input type="number" id="quantity" min="1" value="1" required />
+
+      <label>รายละเอียดการเกิดโรค:</label>
+      <textarea id="description"></textarea>
+
+      <label>การรักษา:</label>
+      <textarea id="treatment"></textarea>
+
+      <label>สถานะ:</label>
+      <select id="status">
+        <option>กำลังรักษา</option>
+        <option>หายแล้ว</option>
+        <option>เสียชีวิต</option>
+      </select>
+
+      <label>ผู้รักษา:</label>
+      <input type="text" id="caretaker" />
+
+      <label>ผู้ที่พบเจอ:</label>
+      <input type="text" id="reporter" />
+
+      <button type="submit">✅ บันทึกรายงาน</button>
+    </form>
+  </div>
+
+  <script>
+    const keyword = "<?= keyword ?>";
+
+    async function loadPlantData() {
+      const res = await fetch(
+        `https://script.google.com/macros/s/AKfycbzKoNvt3JGqKzT-L1RvA7dL5uTqtAox5mDLtRMfu6-I-vMnhDHOv7dsUlxpoaFBkRI1/exec?page=data&keyword=${encodeURIComponent(keyword)}`
+      );
+      const data = await res.json();
+
+      document.getElementById("plant-image").src = convertDriveLink(data.image);
+      document.getElementById("speciesId").textContent = data.speciesId;
+      document.getElementById("name").textContent = data.name;
+      document.getElementById("subcate").textContent = data.subcate;
+      document.getElementById("genus").textContent = data.genus;
+      document.getElementById("scientific").textContent = data.scientific;
+      document.getElementById("morphology").textContent = data.morphology;
+      document.getElementById("barcode").textContent = data.barcode;
+
+      document.getElementById("report-form").dataset.name = data.name;
+      document.getElementById("report-form").dataset.scientific = data.scientific;
+      document.getElementById("report-form").dataset.barcode = data.barcode;
+    }
+
+    function convertDriveLink(url) {
+      const idMatch = url.match(/[-\w]{25,}/);
+      return idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[0]}` : url;
+    }
+
+    document.getElementById("report-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const quantity = parseInt(document.getElementById("quantity").value);
+      const body = {
+        name: form.dataset.name,
+        scientific: form.dataset.scientific,
+        barcode: form.dataset.barcode,
+        zone: document.getElementById("zone").value,
+        quantity: quantity,
+        description: document.getElementById("description").value,
+        treatment: document.getElementById("treatment").value,
+        status: document.getElementById("status").value,
+        caretaker: document.getElementById("caretaker").value,
+        reporter: document.getElementById("reporter").value
+      };
+
+      const res = await fetch(
+        "https://script.google.com/macros/s/AKfycbzKoNvt3JGqKzT-L1RvA7dL5uTqtAox5mDLtRMfu6-I-vMnhDHOv7dsUlxpoaFBkRI1/exec?page=submit",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body)
+        }
+      );
+
+      const text = await res.text();
+      alert(text);
+      form.reset();
+    });
+
+    loadPlantData();
+  </script>
+</body>
+</html>

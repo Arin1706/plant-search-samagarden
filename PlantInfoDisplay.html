@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ข้อมูลพืช</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div id="plantDetail">กำลังโหลดข้อมูล...</div>
+    <h2>📋 แบบฟอร์มรายงานโรคพืช</h2>
+    <form id="reportForm" onsubmit="submitReport(event)">
+      <input type="text" id="zone" placeholder="โซนที่พบ" required />
+      <input type="number" id="quantity" placeholder="จำนวนต้น" min="1" required />
+      <textarea id="symptom" placeholder="รายละเอียดการเกิดโรค" required></textarea>
+      <textarea id="treatment" placeholder="การรักษา"></textarea>
+      <input type="text" id="status" placeholder="สถานะ" />
+      <input type="text" id="caretaker" placeholder="ผู้รักษา" />
+      <input type="text" id="reporter" placeholder="ผู้ที่พบเจอ" />
+      <button type="submit">ส่งรายงาน</button>
+      <div id="submitStatus"></div>
+    </form>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

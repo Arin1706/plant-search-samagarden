@@ -1,0 +1,46 @@
+body {
+  font-family: sans-serif;
+  background-color: #1f3a24;
+  color: #ffffff;
+  padding: 20px;
+}
+.container {
+  background: #ffffff;
+  color: #1f3a24;
+  max-width: 600px;
+  margin: auto;
+  border-radius: 10px;
+  padding: 20px;
+}
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  font-size: 16px;
+}
+button {
+  background: #a1d661;
+  color: #1f3a24;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+ul#suggestions {
+  background: #ffffff;
+  color: #1f3a24;
+  border: 1px solid #cccccc;
+  list-style: none;
+  padding: 0;
+  margin-top: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+ul#suggestions li {
+  padding: 8px;
+  cursor: pointer;
+}
+ul#suggestions li:hover {
+  background-color: #a1d661;
+  color: #ffffff;
+}

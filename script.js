@@ -1,4 +1,4 @@
-const SHEET_API = "https://script.google.com/macros/s/AKfycbx1u-OS9-MZYabqxLMAsB14iI27soBw8C13imJC0XDRkEIkSSj9MsP4IQlHnsDsquqGOA/exec";
+const SHEET_API = "https://script.google.com/macros/s/AKfycbx1u-OS9-MZYabqxLMAsB14iI27soBw8C13imJC0XDRkEIkSSj9MsP4IQlHnsDsquqGOA/exec"; // เปลี่ยนลิงก์ API ของราสเอง
 
 let plantList = [];
 
@@ -7,31 +7,33 @@ async function fetchPlantList() {
   plantList = await res.json();
 }
 
+// 🔍 Autocomplete
 function showSuggestions() {
   const input = document.getElementById("searchInput");
   const suggestionBox = document.getElementById("suggestions");
   const keyword = input.value.toLowerCase();
 
-  suggestionBox.innerHTML = ""; // ล้างคำเดิมก่อน
-
+  suggestionBox.innerHTML = "";
   if (!keyword) return;
 
-  const filtered = plantList.filter(plant =>
-    plant[1].toLowerCase().includes(keyword) || // Name (col B)
-    plant[4].toLowerCase().includes(keyword)    // Scientific Name (col E)
+  const filtered = plantList.filter(
+    plant =>
+      plant[1].toLowerCase().includes(keyword) || // Name
+      plant[4].toLowerCase().includes(keyword)    // Scientific Name
   );
 
   filtered.forEach(plant => {
     const li = document.createElement("li");
     li.textContent = `${plant[1]} (${plant[4]})`;
     li.onclick = () => {
-      input.value = plant[1]; // เลือกชื่อธรรมดา
-      suggestionBox.innerHTML = ""; // ล้างคำแนะนำ
+      input.value = plant[1];
+      suggestionBox.innerHTML = "";
     };
     suggestionBox.appendChild(li);
   });
 }
 
+// 👉 กดปุ่มค้นหา
 function submitSearch() {
   const keyword = document.getElementById("searchInput").value.trim();
   if (keyword) {
@@ -39,9 +41,10 @@ function submitSearch() {
   }
 }
 
-// Display Plant Info
+// 👉 แสดงข้อมูลพืช
 if (location.pathname.includes("PlantInfoDisplay.html")) {
   const keyword = new URLSearchParams(location.search).get("keyword");
+
   fetch(SHEET_API + "?page=data")
     .then(res => res.json())
     .then(data => {
@@ -52,15 +55,13 @@ if (location.pathname.includes("PlantInfoDisplay.html")) {
         <img src="${plant.img}" width="200"><br>
         <strong>Species ID:</strong> ${plant.id}<br>
         <strong>Name:</strong> ${plant.name}<br>
-        <strong>Sub Category:</strong> ${plant.sub}<br>
-        <strong>Genus:</strong> ${plant.genus}<br>
         <strong>Scientific name:</strong> ${plant.sci}<br>
-        <strong>Plant Morphology:</strong> ${plant.morph}<br>
         <strong>Barcode:</strong> <span id="barcode">${plant.bar}</span><br>
       `;
     });
 }
 
+// 📤 ส่งรายงานโรคพืช
 function submitReport(e) {
   e.preventDefault();
   const form = document.getElementById("reportForm");
@@ -69,8 +70,8 @@ function submitReport(e) {
 
   for (let i = 1; i <= qty; i++) {
     const payload = {
-      name: document.querySelector("strong:nth-child(4)").nextSibling.textContent.trim(),
-      sci: document.querySelector("strong:nth-child(10)").nextSibling.textContent.trim(),
+      name: document.querySelector("strong:nth-child(2)").nextSibling.textContent.trim(),
+      sci: document.querySelector("strong:nth-child(6)").nextSibling.textContent.trim(),
       barcode: barcode,
       plantid: `${barcode}-${String(i).padStart(4, "0")}`,
       zone: form.zone.value,
@@ -79,12 +80,12 @@ function submitReport(e) {
       treatment: form.treatment.value,
       status: form.status.value,
       caretaker: form.caretaker.value,
-      reporter: form.reporter.value
+      reporter: form.reporter.value,
     };
 
     fetch(SHEET_API + "?page=report", {
       method: "POST",
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
   }
 
@@ -92,38 +93,5 @@ function submitReport(e) {
   form.reset();
 }
 
+// โหลดลิสต์พืชตอนเปิดหน้า
 window.onload = fetchPlantList;
-document.addEventListener("DOMContentLoaded", function () {
-  const input = document.getElementById("plantInput");
-  const suggestionBox = document.getElementById("suggestions");
-
-  input.addEventListener("input", function () {
-    const keyword = input.value.trim();
-    if (keyword.length === 0) {
-      suggestionBox.innerHTML = "";
-      return;
-    }
-
-    fetch(`https://script.google.com/macros/s/AKfycbw1r_.../exec?page=suggest&keyword=${encodeURIComponent(keyword)}`)
-      .then(response => response.json())
-      .then(data => {
-        suggestionBox.innerHTML = "";
-        data.forEach(item => {
-          const div = document.createElement("div");
-          div.classList.add("suggestion-item");
-          div.textContent = item;
-          div.addEventListener("click", function () {
-            input.value = item;
-            suggestionBox.innerHTML = "";
-          });
-          suggestionBox.appendChild(div);
-        });
-      });
-  });
-
-  document.addEventListener("click", function (event) {
-    if (!suggestionBox.contains(event.target) && event.target !== input) {
-      suggestionBox.innerHTML = "";
-    }
-  });
-});

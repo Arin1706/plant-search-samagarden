@@ -1,31 +1,21 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SAMA Garden Plant Care</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ค้นหาพืช - SAMA Garden</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>🌿 SAMA Garden Plant Care</h1>
-  </header>
-
-  <main class="container">
-    <h2>Search Plant Database</h2>
-    <p>Search by plant name or scientific name</p>
-
+  <div class="container">
+    <h1>🌿 ค้นหาข้อมูลพืช</h1>
     <div class="search-box">
-      <input type="text" id="plantInput" placeholder="Start typing..." autocomplete="off" />
-      <div id="suggestions" class="autocomplete-suggestions"></div>
-      <button class="search-btn" onclick="submitSearch()">🔍 Search Plant</button>
+      <input type="text" id="searchInput" placeholder="ค้นหาชื่อต้นไม้หรือชื่อวิทยาศาสตร์...">
+      <button onclick="submitSearch()">🔍 ค้นหา</button>
     </div>
-  </main>
-
-  <footer>
-    <p>Powered by Google Sheets | Autocomplete by Apps Script</p>
-  </footer>
-
+    <ul id="suggestions"></ul>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>

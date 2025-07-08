@@ -44,3 +44,24 @@ ul#suggestions li:hover {
   background-color: #a1d661;
   color: #ffffff;
 }
+#suggestions {
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+  z-index: 1000;
+}
+
+.suggestion-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  color: #1f3a24;
+}
+
+.suggestion-item:hover {
+  background-color: #a1d661;
+  color: #fff;
+}

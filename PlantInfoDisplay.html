@@ -1,40 +1,32 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ข้อมูลพืช</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>รายละเอียดพืช</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h2>ข้อมูลพืช</h2>
-    <img id="plantImage" src="" alt="plant image" style="max-width: 200px;">
-    <p><strong>Species ID:</strong> <span id="speciesId"></span></p>
-    <p><strong>Name:</strong> <span id="name"></span></p>
-    <p><strong>Sub Category:</strong> <span id="subcate"></span></p>
-    <p><strong>Genus:</strong> <span id="genus"></span></p>
-    <p><strong>Scientific Name:</strong> <span id="scientific"></span></p>
-    <p><strong>Plant Morphology:</strong> <span id="morphology"></span></p>
-    <p><strong>Barcode:</strong> <span id="barcode"></span></p>
-  </div>
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const keyword = urlParams.get('keyword');
+    <h1>🌱 ข้อมูลพืช</h1>
+    <div id="plantInfo" class="info-box">กำลังโหลดข้อมูล...</div>
 
-    fetch(`https://script.google.com/macros/s/REPLACE_WITH_DEPLOYED_API/exec?page=data&keyword=${encodeURIComponent(keyword)}`)
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("plantImage").src = data.image;
-        document.getElementById("speciesId").textContent = data.speciesId;
-        document.getElementById("name").textContent = data.name;
-        document.getElementById("subcate").textContent = data.subcate;
-        document.getElementById("genus").textContent = data.genus;
-        document.getElementById("scientific").textContent = data.scientific;
-        document.getElementById("morphology").textContent = data.morphology;
-        document.getElementById("barcode").textContent = data.barcode;
-      });
-  </script>
+    <h2>📋 แบบฟอร์มรายงานโรคพืช</h2>
+    <form id="reportForm" onsubmit="submitReport(event)">
+      <div class="form-grid">
+        <input type="text" name="zone" placeholder="โซนที่พบ (เช่น A2)" required />
+        <input type="number" name="quantity" placeholder="จำนวนต้น" min="1" required />
+        <input type="text" name="symptom" placeholder="รายละเอียดการเกิดโรค" required />
+        <input type="text" name="treatment" placeholder="การรักษา" />
+        <input type="text" name="status" placeholder="สถานะ (เช่น รอด, รักษาอยู่)" />
+        <input type="text" name="caretaker" placeholder="ผู้รักษา" />
+        <input type="text" name="reporter" placeholder="ผู้ที่พบเจอ" />
+      </div>
+      <button type="submit">📤 ส่งรายงาน</button>
+      <div id="submitStatus"></div>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>

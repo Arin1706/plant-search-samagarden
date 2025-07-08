@@ -1,99 +1,82 @@
-const API_BASE = "https://script.google.com/macros/s/REPLACE_WITH_YOUR_SCRIPT_ID/exec";
+// script.js
+let plantData = [];
+fetch("https://script.google.com/macros/s/AKfycbx1u-OS9-MZYabqxLMAsB14iI27soBw8C13imJC0XDRkEIkSSj9MsP4IQlHnsDsquqGOA/exec?page=data")
+  .then(res => res.json())
+  .then(data => plantData = data);
 
-const input = document.getElementById("searchInput");
-const suggestionsBox = document.getElementById("suggestions");
-const plantDetail = document.getElementById("plantDetail");
-const diseaseForm = document.getElementById("diseaseForm");
-const noResult = document.getElementById("noResult");
+function showSuggestions() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const suggestions = document.getElementById("suggestions");
+  suggestions.innerHTML = "";
+  if (!input) return;
 
-input.addEventListener("input", async () => {
-  const query = input.value.trim();
-  if (query.length === 0) return (suggestionsBox.innerHTML = "");
-
-  const res = await fetch(`${API_BASE}?page=suggest&query=${encodeURIComponent(query)}`);
-  const suggestions = await res.json();
-
-  suggestionsBox.innerHTML = "";
-  suggestions.forEach(item => {
+  const matched = plantData.filter(p => p.name.toLowerCase().includes(input) || p.sci.toLowerCase().includes(input));
+  matched.slice(0, 5).forEach(p => {
     const li = document.createElement("li");
-    li.textContent = `${item.name} (${item.scientific})`;
+    li.textContent = p.name + " (" + p.sci + ")";
     li.onclick = () => {
-      input.value = item.name;
-      suggestionsBox.innerHTML = "";
-      fetchPlantData(item.name);
+      document.getElementById("searchInput").value = p.name;
+      suggestions.innerHTML = "";
     };
-    suggestionsBox.appendChild(li);
+    suggestions.appendChild(li);
   });
-});
+}
 
 function submitSearch() {
-  const keyword = input.value.trim();
-  if (keyword) {
-    fetchPlantData(keyword);
-  } else {
-    alert("กรุณากรอกชื่อต้นไม้ก่อนค้นหา");
-  }
+  const keyword = document.getElementById("searchInput").value.trim();
+  if (!keyword) return alert("กรุณากรอกชื่อพืช");
+  window.location.href = `PlantInfoDisplay.html?keyword=${encodeURIComponent(keyword)}`;
 }
 
-async function fetchPlantData(keyword) {
-  const res = await fetch(`${API_BASE}?page=data&keyword=${encodeURIComponent(keyword)}`);
-  const data = await res.json();
-
-  if (!data || !data.name) {
-    plantDetail.classList.add("hidden");
-    noResult.classList.remove("hidden");
-    return;
-  }
-
-  noResult.classList.add("hidden");
-  plantDetail.classList.remove("hidden");
-
-  document.getElementById("plantImage").src = convertGoogleDriveImage(data.image);
-  document.getElementById("speciesId").textContent = data.speciesId;
-  document.getElementById("name").textContent = data.name;
-  document.getElementById("subcate").textContent = data.subcate;
-  document.getElementById("genus").textContent = data.genus;
-  document.getElementById("scientific").textContent = data.scientific;
-  document.getElementById("morphology").textContent = data.morphology;
-  document.getElementById("barcode").textContent = data.barcode;
-
-  diseaseForm.dataset.barcode = data.barcode;
-  diseaseForm.dataset.name = data.name;
-  diseaseForm.dataset.scientific = data.scientific;
+function getQueryParam(key) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(key);
 }
 
-function convertGoogleDriveImage(url) {
-  const match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)\\//);
-  if (match) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
-  return url;
+if (location.pathname.includes("PlantInfoDisplay.html")) {
+  const keyword = getQueryParam("keyword");
+  fetch("https://script.google.com/macros/s/AKfycbx1u-OS9-MZYabqxLMAsB14iI27soBw8C13imJC0XDRkEIkSSj9MsP4IQlHnsDsquqGOA/exec?page=data")
+    .then(res => res.json())
+    .then(data => {
+      const plant = data.find(p => p.name === keyword || p.sci === keyword);
+      if (!plant) return;
+
+      document.getElementById("plantInfo").innerHTML = `
+        <img src="${plant.img}" width="200"><br>
+        <strong>Species ID:</strong> ${plant.id}<br>
+        <strong>Name:</strong> ${plant.name}<br>
+        <strong>Sub Category:</strong> ${plant.sub}<br>
+        <strong>Genus:</strong> ${plant.genus}<br>
+        <strong>Scientific name:</strong> ${plant.sci}<br>
+        <strong>Plant Morphology:</strong> ${plant.morph}<br>
+        <strong>Barcode:</strong> ${plant.bar}<br>
+      `;
+    });
 }
 
-diseaseForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+function submitReport(event) {
+  event.preventDefault();
+  const name = document.getElementById("plantInfo").querySelector("strong:nth-child(4)").textContent.split(": ")[1];
+  const sci = document.getElementById("plantInfo").querySelector("strong:nth-child(10)").textContent.split(": ")[1];
+  const bar = document.getElementById("plantInfo").querySelector("strong:nth-child(12)").textContent.split(": ")[1];
+  const zone = document.getElementById("zone").value;
+  const qty = parseInt(document.getElementById("quantity").value);
+  const disease = document.getElementById("disease").value;
+  const treatment = document.getElementById("treatment").value;
+  const status = document.getElementById("status").value;
+  const caretaker = document.getElementById("caretaker").value;
+  const reporter = document.getElementById("reporter").value;
 
-  const quantity = parseInt(document.getElementById("quantity").value);
-  const body = {
-    name: diseaseForm.dataset.name,
-    scientific: diseaseForm.dataset.scientific,
-    barcode: diseaseForm.dataset.barcode,
-    zone: document.getElementById("zone").value,
-    quantity,
-    description: document.getElementById("description").value,
-    treatment: document.getElementById("treatment").value,
-    status: document.getElementById("status").value,
-    caretaker: document.getElementById("caretaker").value,
-    reporter: document.getElementById("reporter").value
-  };
-
-  const res = await fetch(`${API_BASE}?page=submit`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-
-  const result = await res.text();
-  alert(result);
-  diseaseForm.reset();
-});
+  for (let i = 1; i <= qty; i++) {
+    const payload = {
+      name, sci, bar,
+      id: `${bar}-${String(i).padStart(4, "0")}`,
+      zone, disease, treatment, status, caretaker, reporter
+    };
+    fetch("https://script.google.com/macros/s/AKfycbx1u-OS9-MZYabqxLMAsB14iI27soBw8C13imJC0XDRkEIkSSj9MsP4IQlHnsDsquqGOA/exec?page=report", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+  }
+  alert("รายงานสำเร็จ");
+}

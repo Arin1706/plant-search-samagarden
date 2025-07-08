@@ -8,24 +8,27 @@ async function fetchPlantList() {
 }
 
 function showSuggestions() {
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  const suggestions = document.getElementById("suggestions");
-  suggestions.innerHTML = "";
+  const input = document.getElementById("searchInput");
+  const suggestionBox = document.getElementById("suggestions");
+  const keyword = input.value.toLowerCase();
 
-  if (!input) return;
+  suggestionBox.innerHTML = ""; // ล้างคำเดิมก่อน
 
-  const match = plantList.filter(p =>
-    p.name.toLowerCase().includes(input) || p.sci.toLowerCase().includes(input)
+  if (!keyword) return;
+
+  const filtered = plantList.filter(plant =>
+    plant[1].toLowerCase().includes(keyword) || // Name (col B)
+    plant[4].toLowerCase().includes(keyword)    // Scientific Name (col E)
   );
 
-  match.slice(0, 8).forEach(p => {
+  filtered.forEach(plant => {
     const li = document.createElement("li");
-    li.textContent = `${p.name} (${p.sci})`;
+    li.textContent = `${plant[1]} (${plant[4]})`;
     li.onclick = () => {
-      document.getElementById("searchInput").value = p.name;
-      suggestions.innerHTML = "";
+      input.value = plant[1]; // เลือกชื่อธรรมดา
+      suggestionBox.innerHTML = ""; // ล้างคำแนะนำ
     };
-    suggestions.appendChild(li);
+    suggestionBox.appendChild(li);
   });
 }
 

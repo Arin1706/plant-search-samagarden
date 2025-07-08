@@ -1,61 +1,21 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบค้นหาพืช - SAMA Garden</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ค้นหาต้นไม้ - SAMA Garden</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🌿 ฐานข้อมูลพืช</h1>
-    <p>รวบรวมข้อมูลพืชพร้อมรูปภาพ</p>
-
+    <h1>🔍 ค้นหาต้นไม้</h1>
     <div class="search-box">
-      <input type="text" id="searchInput" placeholder="ค้นหาชื่อต้นไม้หรือชื่อวิทยาศาสตร์...">
-      <button onclick="submitSearch()">🔍 ค้นหา</button>
-    </div>
-    <ul id="suggestions"></ul>
-
-    <div id="noResult" class="hidden" style="text-align:center; margin-top:40px;">
-      <p style="font-size: 1.2em;">🔍 ไม่พบข้อมูลที่ค้นหา</p>
-      <p>ลองค้นหาด้วยคำอื่น หรือดูรายการทั้งหมด</p>
-    </div>
-
-    <div id="plantDetail" class="hidden">
-      <div class="plant-info">
-        <img id="plantImage" src="" alt="รูปต้นไม้">
-        <div class="details">
-          <p><strong>Species ID:</strong> <span id="speciesId"></span></p>
-          <p><strong>Name:</strong> <span id="name"></span></p>
-          <p><strong>Sub Category:</strong> <span id="subcate"></span></p>
-          <p><strong>Genus:</strong> <span id="genus"></span></p>
-          <p><strong>Scientific Name:</strong> <span id="scientific"></span></p>
-          <p><strong>Plant Morphology:</strong> <span id="morphology"></span></p>
-          <p><strong>Barcode:</strong> <span id="barcode"></span></p>
-        </div>
-      </div>
-
-      <form id="diseaseForm">
-        <h2>📋 รายงานโรคพืช</h2>
-        <label>โซนที่พบ: <input type="text" id="zone" required></label>
-        <label>จำนวนต้น: <input type="number" id="quantity" min="1" required></label>
-        <label>รายละเอียดการเกิดโรค: <textarea id="description"></textarea></label>
-        <label>การรักษา: <textarea id="treatment"></textarea></label>
-        <label>สถานะ: 
-          <select id="status">
-            <option>กำลังรักษา</option>
-            <option>หายแล้ว</option>
-            <option>เสียชีวิต</option>
-          </select>
-        </label>
-        <label>ผู้รักษา: <input type="text" id="caretaker"></label>
-        <label>ผู้ที่พบเจอ: <input type="text" id="reporter"></label>
-        <button type="submit">✅ บันทึกรายงาน</button>
-      </form>
+      <input type="text" id="searchInput" placeholder="พิมพ์ชื่อพืชหรือชื่อวิทยาศาสตร์..." oninput="showSuggestions()" />
+      <ul id="suggestions"></ul>
+      <button onclick="submitSearch()">ค้นหา</button>
     </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>

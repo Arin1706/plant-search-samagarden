@@ -3,21 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ค้นหาต้นไม้</title>
+  <title>ค้นหาพืช - SAMA Garden</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="search-box">
-  <input type="text" id="plantInput" placeholder="กรอกชื่อพืชหรือชื่อวิทยาศาสตร์">
-  <div id="suggestions"></div>
-  <button onclick="submitSearch()">ค้นหา</button>
-</div>
   <div class="container">
     <h1>🔍 ค้นหาพืช - SAMA Garden</h1>
-    <input type="text" id="searchInput" placeholder="พิมพ์ชื่อพืชหรือชื่อวิทยาศาสตร์..." oninput="showSuggestions()">
+
+    <!-- กล่องค้นหา -->
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="พิมพ์ชื่อพืชหรือชื่อวิทยาศาสตร์..."
+      oninput="showSuggestions()"
+    />
     <ul id="suggestions"></ul>
+
+    <!-- ปุ่มค้นหา -->
     <button onclick="submitSearch()">ค้นหา</button>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>

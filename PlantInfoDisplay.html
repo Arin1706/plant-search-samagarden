@@ -8,42 +8,21 @@
 </head>
 <body>
   <div class="container">
-    <div id="plantDetail">📦 กำลังโหลดข้อมูล...</div>
+    <div id="plantDetail">⏳ กำลังโหลดข้อมูล...</div>
 
-    <h2>📝 แบบฟอร์มรายงานโรคพืช</h2>
+    <h2>📋 แบบฟอร์มรายงานโรคพืช</h2>
     <form id="reportForm" onsubmit="submitReport(event)">
-      <!-- โซนที่พบ -->
       <input type="text" id="zone" placeholder="โซนที่พบ" required />
-
-      <!-- จำนวนต้น -->
       <input type="number" id="quantity" placeholder="จำนวนต้น" min="1" required />
-
-      <!-- รายละเอียดการเกิดโรค -->
       <textarea id="symptom" placeholder="รายละเอียดการเกิดโรค" required></textarea>
-
-      <!-- การรักษา -->
       <textarea id="treatment" placeholder="การรักษา"></textarea>
-
-      <!-- สถานะ -->
       <input type="text" id="status" placeholder="สถานะ" />
-
-      <!-- ผู้รักษา -->
-      <input type="text" id="caretaker" placeholder="ผู้รักษา" />
-
-      <!-- ผู้ที่พบเจอ -->
+      <input type="text" id="caretaker" placeholder="ผู้ดูแล" />
       <input type="text" id="reporter" placeholder="ผู้ที่พบเจอ" />
-
-      <!-- ⛔️ hidden fields -->
-      <input type="hidden" id="plantName" />
-      <input type="hidden" id="scientificName" />
-      <input type="hidden" id="barcode" />
-      <input type="hidden" id="speciesId" />
-
-      <button type="submit">📤 ส่งรายงาน</button>
+      <button type="submit">ส่งรายงาน</button>
       <div id="submitStatus"></div>
     </form>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>

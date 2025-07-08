@@ -51,17 +51,17 @@ ul#suggestions li:hover {
   max-height: 200px;
   overflow-y: auto;
   width: 100%;
-  z-index: 1000;
+  z-index: 999;
 }
 
 .suggestion-item {
-  padding: 8px 12px;
+  padding: 10px 15px;
   cursor: pointer;
-  border-bottom: 1px solid #eee;
   color: #1f3a24;
+  border-bottom: 1px solid #cccccc;
 }
 
 .suggestion-item:hover {
   background-color: #a1d661;
-  color: #fff;
+  color: #ffffff;
 }

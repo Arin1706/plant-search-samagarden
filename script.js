@@ -90,3 +90,37 @@ function submitReport(e) {
 }
 
 window.onload = fetchPlantList;
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("plantInput");
+  const suggestionBox = document.getElementById("suggestions");
+
+  input.addEventListener("input", function () {
+    const keyword = input.value.trim();
+    if (keyword.length === 0) {
+      suggestionBox.innerHTML = "";
+      return;
+    }
+
+    fetch(`https://script.google.com/macros/s/AKfycbw1r_.../exec?page=suggest&keyword=${encodeURIComponent(keyword)}`)
+      .then(response => response.json())
+      .then(data => {
+        suggestionBox.innerHTML = "";
+        data.forEach(item => {
+          const div = document.createElement("div");
+          div.classList.add("suggestion-item");
+          div.textContent = item;
+          div.addEventListener("click", function () {
+            input.value = item;
+            suggestionBox.innerHTML = "";
+          });
+          suggestionBox.appendChild(div);
+        });
+      });
+  });
+
+  document.addEventListener("click", function (event) {
+    if (!suggestionBox.contains(event.target) && event.target !== input) {
+      suggestionBox.innerHTML = "";
+    }
+  });
+});
